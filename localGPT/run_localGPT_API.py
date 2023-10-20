@@ -1,3 +1,4 @@
+import socket
 import logging
 import os
 import shutil
@@ -180,8 +181,13 @@ def prompt_route():
         return "No user prompt received", 400
 
 
+def get_ip_address() -> str:
+    hostname = socket.gethostname()
+    ip_address = socket.gethostbyname(hostname)
+    return ip_address
+
 if __name__ == "__main__":
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(filename)s:%(lineno)s - %(message)s", level=logging.INFO
     )
-    app.run(debug=False, host='10.0.135.48', port=5110)
+    app.run(debug=False, host=get_ip_address(), port=5110)
