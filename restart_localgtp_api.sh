@@ -11,7 +11,7 @@ if [[ "$answer" == "y" ]]; then
   echo "Killing the process"
   pkill -u ec2-user -f "python3 run_localGPT_API.py"
   echo "Restarting the process"
-  cd ~/TEMP/GIT/localGPT
+  cd ~/TEMP/GIT/innov_dfoom_doc_chat/localGPT
   nohup python3 run_localGPT_API.py &
 else
   echo "Nothing was done."
