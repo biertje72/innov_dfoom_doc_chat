@@ -62,7 +62,7 @@ DB = Chroma(
 
 RETRIEVER = DB.as_retriever(
   search_type="similarity_score_threshold",  # Added by Maurice :)
-  search_kwargs={'score_threshold': 0.1}     # Added by Maurice :)
+  search_kwargs={'score_threshold': 0.8}     # Added by Maurice :)
 )
 
 LLM = load_model(device_type=DEVICE_TYPE, model_id=MODEL_ID, model_basename=MODEL_BASENAME)
