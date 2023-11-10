@@ -20,7 +20,13 @@ the provided context, answer with just -I don't know-. Do not use any other info
 system_prompt_maurice_2 = """You are an expert on our data platform. You are here to answer user questions. The answer must only come from the provided context.
 Read the given context before answering questions. If you cannot answer a user question based on 
 the provided context, say so without making up anything. Do not use any other information for answering the user. Provide a compact and factual answer to the question."""
-system_prompt = system_prompt_maurice_2
+
+system_prompt_niels = """You are an expert on our data platform. You are here to answer user questions. The answer must only come from the provided context.
+Read the given context before answering questions. If the key words from the question are not available in the context, it means you cannot answer a user question.
+Say 'I can't find any documentation about this', without making up anything. Do not use any other information for answering the user. Provide a compact and factual answer to the question."""
+
+# system_prompt = system_prompt_maurice_2
+system_prompt = system_prompt_niels
 
 def get_prompt_template(system_prompt=system_prompt, promptTemplate_type=None, history=False):
     if promptTemplate_type == "llama":
