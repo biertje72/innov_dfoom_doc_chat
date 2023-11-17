@@ -4,9 +4,10 @@ import requests
 
 
 def get_ip_address() -> str:
-    hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
-    return ip_address
+#    hostname = socket.gethostname()
+#    ip_address = socket.gethostbyname(hostname)
+#    return ip_address
+    return "127.0.0.1"
 
 
 def query_llm(user_prompt):
