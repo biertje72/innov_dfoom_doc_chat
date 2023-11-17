@@ -26,8 +26,8 @@ Read the given context before answering questions. If you can't answer a user qu
 Do not use any external information for answering the user. Provide a concise and factual answer to the question.
 Keep the system prompt short to control the language model. Remember, it affects the context window length."""
 
-# system_prompt = system_prompt_maurice_2
-system_prompt = system_prompt_niels
+system_prompt = system_prompt_maurice_2
+# system_prompt = system_prompt_niels
 
 def get_prompt_template(system_prompt=system_prompt, promptTemplate_type=None, history=False):
     if promptTemplate_type == "llama":
