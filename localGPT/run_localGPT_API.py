@@ -178,7 +178,9 @@ def prompt_route():
                 (os.path.basename(str(document.metadata["source"])), str(document.page_content))
             )
             print(document)
+            logging.info(f"Running on: {document}")
             print(document.metadata)
+            logging.info(f"Running on: {document.metadata}")
 
         return jsonify(prompt_response_dict), 200
     else:
