@@ -251,12 +251,13 @@ def main(device_type, show_sources, use_history, model_type):
         print("\n> Answer:")
         print(answer)
 
-        if show_sources:  # this is a flag that you can set to disable showing answers.
+        if True:  # this is a flag that you can set to disable showing answers.
             # # Print the relevant sources used for the answer
             print("----------------------------------SOURCE DOCUMENTS---------------------------")
             for document in docs:
                 print("\n> " + document.metadata["source"] + ":")
                 print(document.page_content)
+                print(document)
             print("----------------------------------SOURCE DOCUMENTS---------------------------")
 
 
