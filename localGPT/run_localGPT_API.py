@@ -177,6 +177,8 @@ def prompt_route():
             prompt_response_dict["Sources"].append(
                 (os.path.basename(str(document.metadata["source"])), str(document.page_content))
             )
+            print(document)
+            print(document.metadata)
 
         return jsonify(prompt_response_dict), 200
     else:
