@@ -19,6 +19,8 @@ from werkzeug.utils import secure_filename
 
 from constants import CHROMA_SETTINGS, EMBEDDING_MODEL_NAME, PERSIST_DIRECTORY, MODEL_ID, MODEL_BASENAME
 
+logging.basicConfig(level=logging.DEBUG)
+
 if torch.backends.mps.is_available():
     DEVICE_TYPE = "mps"
 elif torch.cuda.is_available():
@@ -62,7 +64,7 @@ DB = Chroma(
 
 RETRIEVER = DB.as_retriever(
   search_type="similarity_score_threshold",  # Added by Maurice :)
-  search_kwargs={'score_threshold': 0.8}     # Added by Maurice :)
+  search_kwargs={'score_threshold': 0.82}     # Added by Maurice :)
 )
 
 LLM = load_model(device_type=DEVICE_TYPE, model_id=MODEL_ID, model_basename=MODEL_BASENAME)
