@@ -250,23 +250,16 @@ def main(device_type, show_sources, use_history, model_type):
         print(query)
         print("\n> Answer:")
         print(answer)
+        print("\n> Docs:")
+        print(docs)
 
         if show_sources:  # this is a flag that you can set to disable showing answers.
-            # Print the relevant sources used for the answer
+            # # Print the relevant sources used for the answer
             print("----------------------------------SOURCE DOCUMENTS---------------------------")
-            selected_sources = [docs[0]] if docs else []  # Select the first source if available
-            for document in selected_sources:
+            for document in docs:
                 print("\n> " + document.metadata["source"] + ":")
                 print(document.page_content)
             print("----------------------------------SOURCE DOCUMENTS---------------------------")
-
-        # if show_sources:  # this is a flag that you can set to disable showing answers.
-        #     # # Print the relevant sources used for the answer
-        #     print("----------------------------------SOURCE DOCUMENTS---------------------------")
-        #     for document in docs:
-        #         print("\n> " + document.metadata["source"] + ":")
-        #         print(document.page_content)
-        #     print("----------------------------------SOURCE DOCUMENTS---------------------------")
 
 if __name__ == "__main__":
     logging.basicConfig(
