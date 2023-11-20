@@ -62,9 +62,13 @@ DB = Chroma(
     client_settings=CHROMA_SETTINGS,
 )
 
+#MBI: zie https://github.com/langchain-ai/langchain/blob/fe7b40cb2a3628290d45de169498ccbcc73735d3/libs/langchain/langchain/schema/vectorstore.py#L562
 RETRIEVER = DB.as_retriever(
-  search_type="similarity_score_threshold",  # Added by Maurice :)
-  search_kwargs={'score_threshold': 0.82}     # Added by Maurice :)
+    search_type="similarity_score_threshold",  # Added by Maurice :)
+    search_kwargs={
+        'score_threshold': 0.82, # score_threshold: Minimum relevance threshold for similarity_score_threshold
+        'k': 1,  # Amount of documents to return (Default: 4)
+    }     # Added by Maurice :)
 )
 
 LLM = load_model(device_type=DEVICE_TYPE, model_id=MODEL_ID, model_basename=MODEL_BASENAME)

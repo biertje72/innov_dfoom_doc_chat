@@ -70,9 +70,8 @@ def load_model(device_type, model_id, model_basename=None, LOGGING=logging):
     # Load configuration from the model to avoid warnings
     generation_config = GenerationConfig.from_pretrained(model_id)
     # see here for details:
-    # https://huggingface.co/docs/transformers/
-    # main_classes/text_generation#transformers.GenerationConfig.from_pretrained.returns
-
+    # https://huggingface.co/docs/transformers/main_classes/text_generation#transformers.GenerationConfig.from_pretrained.returns
+    # MBI: https://huggingface.co/docs/transformers/main_classes/configuration
     # Create a pipeline for text generation
     pipe = pipeline(
         "text-generation",
