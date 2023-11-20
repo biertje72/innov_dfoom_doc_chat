@@ -197,7 +197,7 @@ def get_scores():
     user_prompt = request.form.get("user_prompt")
     if user_prompt:
         # Find the relevant pages
-        search = DB.similarity_search_with_score(user_prompt)  List[Tuple[Document, float]]
+        search = DB.similarity_search_with_score(user_prompt)  # returns List[Tuple[Document, float]]
 
         doc_list = []
         for doc in search:
