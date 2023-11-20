@@ -66,7 +66,7 @@ DB = Chroma(
 RETRIEVER = DB.as_retriever(
     search_type="similarity_score_threshold",  # Added by Maurice :)
     search_kwargs={
-        'score_threshold': 0.82, # score_threshold: Minimum relevance threshold for similarity_score_threshold
+        'score_threshold': 0.8, # score_threshold: Minimum relevance threshold for similarity_score_threshold
         'k': 1,  # Amount of documents to return (Default: 4)
     }     # Added by Maurice :)
 )
