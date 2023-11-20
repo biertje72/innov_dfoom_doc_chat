@@ -191,6 +191,21 @@ def prompt_route():
         return "No user prompt received", 400
 
 
+@app.route("/api/get_scores", methods=["GET", "POST"])
+def get_scores():
+    global DB
+    user_prompt = request.form.get("user_prompt")
+    if user_prompt:
+        # Find the relevant pages
+        search = DB.similarity_search_with_score(user_prompt)
+        doc_list = []
+        for doc in search:
+            doc_list.append(doc)
+        return jsonify(doc_list), 200
+    else:
+        return "No user prompt received", 400
+
+
 def get_ip_address() -> str:
     hostname = socket.gethostname()
     ip_address = socket.gethostbyname(hostname)
