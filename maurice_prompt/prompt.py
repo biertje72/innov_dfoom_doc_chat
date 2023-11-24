@@ -63,14 +63,13 @@ def main():
                 if last_result["Sources"]:
                     print(f"\nAnswer:\n{last_result['Answer']}")
                     filename = os.path.splitext(os.path.basename(last_result["Sources"][0][0]))[0]
-                    print(f"\nURL:\n{filename}")
+                    print(f"\nURL:{filename}")
                 else:
                     print(
                         "\nAnswer:\nBased on our documentation, I could not find a relevant answer"
                     )
         except KeyboardInterrupt:
-            print("\nCTRL-C detected. Continuing...")
-            # Handle any additional cleanup or actions after CTRL-C if needed
+            print("\nCTRL+C detected. Use CTRL+Insert to copy or use 'q' if you want to quit.")
 
 
 if __name__ == "__main__":
