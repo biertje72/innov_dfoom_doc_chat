@@ -72,13 +72,16 @@ def main():
         except KeyboardInterrupt:
             print("\nCTRL+C detected. Use CTRL+Insert to copy..")
             user_prompt = input(
-                "\nDo you want to continue (y/n)?"
+                "\nDo you want to continue (y/n)?:\n"
             )
-            if user_prompt != "y":
-                print("Closing..")
+            try:
+                if user_prompt != "y":
+                    print("Closing..")
+                    break
+                else:
+                    continue
+            except KeyboardInterrupt:
                 break
-            else:
-                continue
 
 
 if __name__ == "__main__":
