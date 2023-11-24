@@ -69,7 +69,7 @@ def main():
                         "\nAnswer:\nBased on our documentation, I could not find a relevant answer"
                     )
         except KeyboardInterrupt:
-            print("\nCTRL+C detected. Use CTRL+Insert to copy or use 'q' if you want to quit.")
+            print("\nCTRL+C detected. Use CTRL+Insert to copy..")
 
 
 if __name__ == "__main__":
