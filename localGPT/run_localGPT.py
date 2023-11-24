@@ -250,8 +250,6 @@ def main(device_type, show_sources, use_history, model_type):
         print(query)
         print("\n> Answer:")
         print(answer)
-        print("\n> Docs:")
-        print(docs)
 
         if show_sources:  # this is a flag that you can set to disable showing answers.
             # # Print the relevant sources used for the answer

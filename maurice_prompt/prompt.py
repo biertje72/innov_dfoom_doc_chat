@@ -45,6 +45,7 @@ def main():
             last_result = response.json()
             if last_result["Sources"]:
                 print(f"\nAnswer:\n{last_result['Answer']}")
+                print(f"\Source:\n{last_result['Sources']}")
             else:
                 print(
                     f"\nAnswer:\nBased on our documentation, I could not find a relevant answer"
