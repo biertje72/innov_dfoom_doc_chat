@@ -45,6 +45,7 @@ def main():
             if user_prompt == "":
                 continue
             if user_prompt == "q":
+                print("Closing..")
                 break
             elif user_prompt == "d":
                 print("\nDetails:")
@@ -70,6 +71,14 @@ def main():
                     )
         except KeyboardInterrupt:
             print("\nCTRL+C detected. Use CTRL+Insert to copy..")
+            user_prompt = input(
+                "\nDo you want to continue (y/n)?"
+            )
+            if user_prompt != "y":
+                print("Closing..")
+                break
+            else:
+                continue
 
 
 if __name__ == "__main__":
