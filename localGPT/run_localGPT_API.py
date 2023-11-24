@@ -19,6 +19,8 @@ from werkzeug.utils import secure_filename
 
 from constants import CHROMA_SETTINGS, EMBEDDING_MODEL_NAME, PERSIST_DIRECTORY, MODEL_ID, MODEL_BASENAME
 
+logging.basicConfig(level=logging.DEBUG)
+
 if torch.backends.mps.is_available():
     DEVICE_TYPE = "mps"
 elif torch.cuda.is_available():
@@ -60,9 +62,18 @@ DB = Chroma(
     client_settings=CHROMA_SETTINGS,
 )
 
+#MBI: zie https://github.com/langchain-ai/langchain/blob/fe7b40cb2a3628290d45de169498ccbcc73735d3/libs/langchain/langchain/schema/vectorstore.py#L562
 RETRIEVER = DB.as_retriever(
+<<<<<<< HEAD
   search_type="similarity_score_threshold",  # Added by Maurice :)
   search_kwargs={'score_threshold': 0.81}     # Added by Maurice :) Orig. 0.3
+=======
+    search_type="similarity_score_threshold",  # Added by Maurice :)
+    search_kwargs={
+        'score_threshold': 0.8, # score_threshold: Minimum relevance threshold for similarity_score_threshold
+        'k': 1,  # Amount of documents to return (Default: 4)
+    }     # Added by Maurice :)
+>>>>>>> origin/main
 )
 
 LLM = load_model(device_type=DEVICE_TYPE, model_id=MODEL_ID, model_basename=MODEL_BASENAME)
@@ -175,8 +186,30 @@ def prompt_route():
             prompt_response_dict["Sources"].append(
                 (os.path.basename(str(document.metadata["source"])), str(document.page_content))
             )
+            print(document)
+            logging.info(f"Running on: {document}")
+            print(document.metadata)
+            logging.info(f"Running on: {document.metadata}")
 
         return jsonify(prompt_response_dict), 200
+    else:
+        return "No user prompt received", 400
+
+
+@app.route("/api/get_scores", methods=["GET", "POST"])
+def get_scores():
+    global DB
+    user_prompt = request.form.get("user_prompt")
+    if user_prompt:
+        # Find the relevant pages
+        search = DB.similarity_search_with_score(user_prompt)  # returns List[Tuple[Document, float]]
+
+        doc_list = []
+        for doc in search:
+            location = doc[0].metadata['source'].split('/')[-1]
+            distance = doc[1]
+            doc_list.append((location, distance))
+        return jsonify(doc_list), 200
     else:
         return "No user prompt received", 400
 
@@ -190,4 +223,4 @@ if __name__ == "__main__":
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(filename)s:%(lineno)s - %(message)s", level=logging.INFO
     )
-    app.run(debug=False, host=get_ip_address(), port=5110)
+    app.run(debug=False, port=5110)
