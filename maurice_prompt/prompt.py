@@ -81,6 +81,7 @@ def main():
                 else:
                     continue
             except KeyboardInterrupt:
+                print("Closing..")
                 break
 
 if __name__ == "__main__":
