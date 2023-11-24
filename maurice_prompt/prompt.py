@@ -1,6 +1,8 @@
 import json
 import time
 import requests
+import os
+import signal
 
 def get_ip_address() -> str:
 #    hostname = socket.gethostname()
@@ -34,9 +36,15 @@ def pretty_print_json(json_data):
     """Pretty prints the given JSON data to the screen."""
     print(json.dumps(json_data, indent=4, sort_keys=True))
 
+def handler(signum, frame):
+    print('\nSignal handler called with signal', signum)
+    # Additional cleanup or actions can be performed here if needed
+    exit(0)
 
 def main():
     last_result = None
+    # Set the signal handler for CTRL-C (SIGINT)
+    signal.signal(signal.SIGINT, handler)
     while True:
         user_prompt = input(
             "\n\nAsk me anything about the DP (d for details, r for reload docs, q to quit):\n"
@@ -61,7 +69,8 @@ def main():
             last_result = response.json()
             if last_result["Sources"]:
                 print(f"\nAnswer:\n{last_result['Answer']}")
-                print(f"\Source:\n{last_result['Sources']}")
+                filename = os.path.splitext(os.path.basename(last_result["Sources"][0][0]))[0]
+                print(f"\URL:\n{filename}")
             else:
                 print(
                     "\nAnswer:\nBased on our documentation, I could not find a relevant answer"
