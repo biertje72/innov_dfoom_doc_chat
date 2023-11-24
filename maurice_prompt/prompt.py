@@ -2,7 +2,6 @@ import json
 import time
 import requests
 import os
-import signal
 
 def get_ip_address() -> str:
 #    hostname = socket.gethostname()
@@ -35,13 +34,6 @@ def query_llm(user_prompt: str):
 def pretty_print_json(json_data):
     """Pretty prints the given JSON data to the screen."""
     print(json.dumps(json_data, indent=4, sort_keys=True))
-
-def handler(signum, frame):
-    print('\nSignal handler called with signal', signum)
-    # Additional cleanup or actions can be performed here if needed
-
-# Set the signal handler for CTRL-C (SIGINT)
-signal.signal(signal.SIGINT, handler)
 
 def main():
     last_result = None
