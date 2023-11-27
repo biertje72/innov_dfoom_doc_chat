@@ -38,34 +38,49 @@ def pretty_print_json(json_data):
 def main():
     last_result = None
     while True:
-        user_prompt = input(
-            "\n\nAsk me anything about the DP (d for details, r for reload docs, q to quit):\n"
-        )
-        if user_prompt == "":
-            continue
-        if user_prompt == "q":
-            break
-        elif user_prompt == "d":
-            print("\nDetails:")
-            pretty_print_json(last_result)
-        elif user_prompt == "r":
-            print("Reloading/ingesting")
-            # response = requests.get("http://10.0.135.48:5110/api/run_ingest")
-            response = requests.get(f"http://{get_ip_address()}:5110/api/run_ingest")
-            print(".. done Reloading/ingesting")
-        else:
-            response = query_llm(user_prompt)
-            if response is None:
-                print("Connection to localGPT times out... Try again")
+        try:
+            user_prompt = input(
+                "\n\nAsk me anything about the DP (d for details, r for reload docs, q to quit):\n"
+            )
+            if user_prompt == "":
                 continue
-            last_result = response.json()
-            if last_result["Sources"]:
-                print(f"\nAnswer:\n{last_result['Answer']}")
+            if user_prompt == "q":
+                print("Closing..")
+                break
+            elif user_prompt == "d":
+                print("\nDetails:")
+                pretty_print_json(last_result)
+            elif user_prompt == "r":
+                print("Reloading/ingesting")
+                # response = requests.get(http://10.0.135.48:5110/api/run_ingest)
+                response = requests.get(fhttp://{get_ip_address()}:5110/api/run_ingest)
+                print(".. done Reloading/ingesting")
             else:
-                print(
-                    "\nAnswer:\nBased on our documentation, I could not find a relevant answer"
+                response = query_llm(user_prompt)
+                if response is None:
+                    print("Connection to localGPT times out... Try again")
+                    continue
+                last_result = response.json()
+                if last_result["Sources"]:
+                    print(f"\nAnswer:\n{last_result['Answer']}")
+                else:
+                    print(
+                        "\nAnswer:\nBased on our documentation, I could not find a relevant answer"
+                    )
+        except KeyboardInterrupt:
+            print("\nCTRL+C detected. Use CTRL+Insert to copy..")
+            try:
+                user_prompt = input(
+                    "\nDo you want to continue (y/n)?:\n"
                 )
-
+                if user_prompt.lower() != "y":
+                    print("Closing..")
+                    break
+                else:
+                    continue
+            except KeyboardInterrupt:
+                print("Closing..")
+                break
 
 if __name__ == "__main__":
     main()
