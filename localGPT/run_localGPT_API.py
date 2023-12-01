@@ -119,7 +119,7 @@ def sync_s3_to_source_docs_route():
         print("DONE")
 
         # Copy all the files on s3 recursively to the SOURCE_DOCUMENTS folder
-        s3_client = boto3.client("s3", region_name="eu-west-1")
+        s3_client = boto3.resource("s3", region_name="eu-west-1")
         bucket = s3_client.Bucket(S3_SOURCES_BUCKET_NAME)
         for obj in bucket.objects.all():
             local_file_path = os.path.join(sources_folder_name, obj.key)
