@@ -143,7 +143,7 @@ def sync_s3_to_source_docs_route():
         client = boto3.client('s3')
         resource = boto3.resource('s3')
         _download_dir(client, resource, prefix=S3_PREFIX, local=sources_folder_name, bucket=S3_SOURCES_BUCKET_NAME)
-        return "Files synched successfully from {S3_SOURCES_BUCKET_NAME}/{S3_PREFIX} to local {sources_folder_name", 200
+        return f"Files synched successfully from {S3_SOURCES_BUCKET_NAME}/{S3_PREFIX} to local {sources_folder_name}", 200
 
     except Exception as e:
         print(f"Error during sync_s3_to_source_docs_route: {e}.")
