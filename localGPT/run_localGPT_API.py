@@ -31,6 +31,9 @@ elif torch.cuda.is_available():
 else:
     DEVICE_TYPE = "cpu"
 
+# Flag to determine whether to use chat history or not.
+USE_HISTORY = True #MBI custom, Maurice added this
+
 SHOW_SOURCES = True
 logging.info(f"Running on: {DEVICE_TYPE}")
 logging.info(f"Display Source Documents set to: {SHOW_SOURCES}")
@@ -75,16 +78,17 @@ RETRIEVER = DB.as_retriever(
 )
 
 LLM = load_model(device_type=DEVICE_TYPE, model_id=MODEL_ID, model_basename=MODEL_BASENAME)
-prompt, memory = get_prompt_template(promptTemplate_type="llama", history=False)
+prompt, memory = get_prompt_template(promptTemplate_type="llama", history=USE_HISTORY)
+chain_type_kwargs = {"prompt": prompt}
+if USE_HISTORY:
+    chain_type_kwargs["memory"] = memory
 
 QA = RetrievalQA.from_chain_type(
     llm=LLM,
     chain_type="stuff",
     retriever=RETRIEVER,
     return_source_documents=SHOW_SOURCES,
-    chain_type_kwargs={
-        "prompt": prompt,
-    },
+    chain_type_kwargs=chain_type_kwargs,
 )
 
 app = Flask(__name__)
@@ -196,7 +200,7 @@ def run_ingest_route():
             client_settings=CHROMA_SETTINGS,
         )
         RETRIEVER = DB.as_retriever()
-        prompt, memory = get_prompt_template(promptTemplate_type="llama", history=False)
+        prompt, memory = get_prompt_template(promptTemplate_type="llama", history=USE_HISTORY)
 
         QA = RetrievalQA.from_chain_type(
             llm=LLM,
