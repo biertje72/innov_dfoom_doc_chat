@@ -102,6 +102,7 @@ def delete_source_route():
 
 
 S3_SOURCES_BUCKET_NAME = "anl-dp-localgpt-source-documents"
+S3_PREFIX = "maurice"
 
 class SyncS3ToSourceException(Exception):
     pass
@@ -121,7 +122,8 @@ def sync_s3_to_source_docs_route():
         # Copy all the files on s3 recursively to the SOURCE_DOCUMENTS folder
         s3_client = boto3.resource("s3", region_name="eu-west-1")
         bucket = s3_client.Bucket(S3_SOURCES_BUCKET_NAME)
-        for obj in bucket.objects.all():
+        for obj in bucket.objects.filter(Prefix=S3_PREFIX):
+
             local_file_path = os.path.join(sources_folder_name, obj.key)
             with open(local_file_path, "wb") as local_file:
                 bucket.download_fileobj(obj.key, local_file)
