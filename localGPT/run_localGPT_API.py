@@ -103,7 +103,7 @@ def delete_source_route():
 
 
 S3_SOURCES_BUCKET_NAME = "anl-dp-localgpt-source-documents"
-S3_PREFIX = "maurice"
+S3_PREFIX = "Glue_Documentation/maurice_testdocs"
 
 class SyncS3ToSourceException(Exception):
     pass
