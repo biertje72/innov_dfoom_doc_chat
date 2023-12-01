@@ -1,8 +1,10 @@
+import boto3
 import socket
 import logging
 import os
 import shutil
 import subprocess
+
 
 import torch
 from flask import Flask, jsonify, request
@@ -97,6 +99,36 @@ def delete_source_route():
     os.makedirs(folder_name)
 
     return jsonify({"message": f"Folder '{folder_name}' successfully deleted and recreated."})
+
+
+S3_SOURCES_BUCKET_NAME = "anl-dp-localgpt-source-documents"
+
+class SyncS3ToSourceException(Exception):
+    pass
+
+@app.route("/api/sync_s3_to_source_docs", methods=["GET"])
+def sync_s3_to_source_docs_route():
+    try:
+        print("Remove all existing documents from the SOURCE_DOCUMENTS folder", end="... ")
+        sources_folder_name = "SOURCE_DOCUMENTS"
+
+        if os.path.exists(sources_folder_name):
+            shutil.rmtree(sources_folder_name)
+
+        os.makedirs(sources_folder_name)
+        print("DONE")
+
+        # Copy all the files on s3 recursively to the SOURCE_DOCUMENTS folder
+        s3_client = boto3.client("s3", region_name="eu-west-1")
+        bucket = s3_client.Bucket(S3_SOURCES_BUCKET_NAME)
+        for obj in bucket.objects.all():
+            local_file_path = os.path.join(sources_folder_name, obj.key)
+            with open(local_file_path, "wb") as local_file:
+                bucket.download_fileobj(obj.key, local_file)
+
+    except Exception as e:
+        print(f"Error during sync_s3_to_source_docs_route: {e}.")
+        raise SyncS3ToSourceException(e) from e
 
 
 @app.route("/api/save_document", methods=["GET", "POST"])
