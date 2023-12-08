@@ -112,7 +112,7 @@ def delete_source_route():
 #S3_SOURCES_BUCKET_NAME = "anl-dp-localgpt-source-documents"
 #S3_PREFIX = "Glue_Documentation/maurice_testdocs"
 S3_SOURCES_BUCKET_NAME = "anl-dp-{env}-prompt-engine-artifacts"
-S3_PREFIX = "source_documents"
+S3_PREFIX = "SOURCE_DOCUMENTS"
 LOCAL_SOURCES_FOLDER_NAME = "SOURCE_DOCUMENTS"
 
 
