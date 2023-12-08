@@ -3,6 +3,7 @@ import logging
 import os
 import shutil
 import subprocess
+from typing import Any, Optional
 
 
 import torch
@@ -108,8 +109,13 @@ def delete_source_route():
 
 # future: anl-dp-bidev-prompt-engine-artifacts
 # bidev/biops/sbox
-S3_SOURCES_BUCKET_NAME = "anl-dp-localgpt-source-documents"
-S3_PREFIX = "Glue_Documentation/maurice_testdocs"
+#S3_SOURCES_BUCKET_NAME = "anl-dp-localgpt-source-documents"
+#S3_PREFIX = "Glue_Documentation/maurice_testdocs"
+S3_SOURCES_BUCKET_NAME = "anl-dp-{env}-prompt-engine-artifacts"
+S3_PREFIX = "source_documents"
+LOCAL_SOURCES_FOLDER_NAME = "SOURCE_DOCUMENTS"
+
+
 
 class SyncS3ToSourceException(Exception):
     pass
@@ -138,21 +144,75 @@ def _download_dir(client: Any, resource: Any, prefix: str, local: str = "/tmp", 
                 resource.meta.client.download_file(bucket, file.get("Key"), dest_pathname)
 
 
+def get_account_id() -> Optional[str]:
+    """Get ID of the AWS account that you are on.
+
+    :return: the ID of the account. If this ID fails to be retrieved, None is
+        returned instead.
+    """
+    # Get the AWS account ID so that we can determine if it is the dev or prd
+    # environment.
+    client = boto3.client("sts")
+    caller_identity = client.get_caller_identity()
+    if not caller_identity:
+        print("Failed to retrieve caller identity.")
+        return None
+
+    return caller_identity["Account"]
+
+
+ACCOUNT_MAP = {
+    "297320915425": "sbox",
+    "617760463975": "bidev",
+    "658212563339": "biops", 
+}
+
+def get_account_name() -> Optional[str]:
+    """Get name of the AWS environment that you are on. Returns None if the ID of the account fails to be retrieved.
+    """
+    account_nr = get_account_id()
+    if account_nr is None:
+        return None
+    return ACCOUNT_MAP.get(account_nr, None)
+
+
+
+
+def copy_s3_to_local(bucket: str, prefix: str, local: str) -> None:
+    """Copy objects from an S3 bucket to a local directory.
+    
+    :param bucket: Name of the S3 bucket.
+    :param prefix: Only copy objects with keys starting with this prefix. 
+    :param local: Local path to copy objects to.
+    :return: None
+    
+    Examples:
+        >>> copy_s3_to_local('mybucket', 'data/', '/tmp/data')
+
+    This will copy all objects in the 'data/' prefix in 'mybucket' to the 
+    '/tmp/data' directory locally.
+    """
+    client = boto3.client('s3')
+    resource = boto3.resource('s3')
+    _download_dir(client, resource, prefix=prefix, local=local, bucket=bucket)
+
+
 @app.route("/api/sync_s3_to_source_docs", methods=["GET"])
 def sync_s3_to_source_docs_route():
     try:
         print("Remove all existing documents from the SOURCE_DOCUMENTS folder", end="... ")
-        sources_folder_name = "SOURCE_DOCUMENTS"
-        if os.path.exists(sources_folder_name):
-            shutil.rmtree(sources_folder_name)
-        os.makedirs(sources_folder_name)
+        if os.path.exists(LOCAL_SOURCES_FOLDER_NAME):
+            shutil.rmtree(LOCAL_SOURCES_FOLDER_NAME)
+        os.makedirs(LOCAL_SOURCES_FOLDER_NAME)
         print("DONE")
 
-        # # Copy all the files on s3 recursively to the SOURCE_DOCUMENTS folder
-        client = boto3.client('s3')
-        resource = boto3.resource('s3')
-        _download_dir(client, resource, prefix=S3_PREFIX, local=sources_folder_name, bucket=S3_SOURCES_BUCKET_NAME)
-        return f"Files synched successfully from {S3_SOURCES_BUCKET_NAME}/{S3_PREFIX} to local {sources_folder_name}", 200
+        # Copy all the files on s3 recursively to the SOURCE_DOCUMENTS folder
+        bucket_name = S3_SOURCES_BUCKET_NAME.format(env=get_account_name())
+
+        print(f"Syncing files from {bucket_name}/{S3_PREFIX} to local {LOCAL_SOURCES_FOLDER_NAME}", end="... ")
+        copy_s3_to_local(bucket=bucket_name, prefix=S3_PREFIX, local=LOCAL_SOURCES_FOLDER_NAME)
+
+        return f"Files synched successfully from {bucket_name}/{S3_PREFIX} to local {LOCAL_SOURCES_FOLDER_NAME}", 200
 
     except Exception as e:
         print(f"Error during sync_s3_to_source_docs_route: {e}.")
