@@ -33,7 +33,7 @@ else:
     DEVICE_TYPE = "cpu"
 
 # Amount of documents to return (Default: 4)
-K_VALUE = 1
+K_VALUE = 3
 SCORE_THRESHOLD = 0.8  # score_threshold: Minimum relevance threshold for similarity_score_threshold
 
 # Flag to determine whether to use chat history or not.
