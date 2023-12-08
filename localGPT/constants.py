@@ -45,7 +45,7 @@ N_BATCH = 512
 # https://python.langchain.com/en/latest/_modules/langchain/document_loaders/excel.html#UnstructuredExcelLoader
 DOCUMENT_MAP = {
     ".txt": TextLoader,
-    ".md": UnstructuredMarkdownLoader,
+#    ".md": UnstructuredMarkdownLoader,
     ".py": TextLoader,
     # ".pdf": PDFMinerLoader,
     ".pdf": UnstructuredFileLoader,
