@@ -37,7 +37,7 @@ K_VALUE = 1
 SCORE_THRESHOLD = 0.8  # score_threshold: Minimum relevance threshold for similarity_score_threshold
 
 # Flag to determine whether to use chat history or not.
-USE_HISTORY = True #MBI custom, Maurice added this
+USE_HISTORY = False #MBI custom, Maurice added this
 
 # S3_SOURCES_BUCKET_NAME was "anl-dp-localgpt-source-documents
 # S3_PREFIX was "Glue_Documentation/maurice_testdocs"
