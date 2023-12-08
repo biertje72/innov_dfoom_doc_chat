@@ -32,7 +32,7 @@ else:
     DEVICE_TYPE = "cpu"
 
 # Flag to determine whether to use chat history or not.
-USE_HISTORY = True #MBI custom, Maurice added this
+USE_HISTORY = False #MBI custom, Maurice added this
 
 SHOW_SOURCES = True
 logging.info(f"Running on: {DEVICE_TYPE}")
@@ -106,24 +106,36 @@ def delete_source_route():
     return jsonify({"message": f"Folder '{folder_name}' successfully deleted and recreated."})
 
 
+# future: anl-dp-bidev-prompt-engine-artifacts
+# bidev/biops/sbox
 S3_SOURCES_BUCKET_NAME = "anl-dp-localgpt-source-documents"
 S3_PREFIX = "Glue_Documentation/maurice_testdocs"
 
 class SyncS3ToSourceException(Exception):
     pass
 
-def _download_dir(client, resource, prefix, local='/tmp', bucket='your_bucket'):
-    paginator = client.get_paginator('list_objects')
-    for result in paginator.paginate(Bucket=bucket, Delimiter='/', Prefix=prefix):
-        if result.get('CommonPrefixes') is not None:
-            for subdir in result.get('CommonPrefixes'):
-                _download_dir(client, resource, subdir.get('Prefix'), local, bucket)
-        for file in result.get('Contents', []):
-            dest_pathname = os.path.join(local, file.get('Key'))
+
+def _download_dir(client: Any, resource: Any, prefix: str, local: str = "/tmp", bucket: str = "your_bucket") -> None:
+    """
+    Recursively download all files under a prefix from an S3 bucket to a local directory
+
+    :param client: (boto3.client): Boto3 S3 client 
+    :param resource (boto3.resource): Boto3 S3 resource
+    :param prefix (str): S3 key prefix to download from 
+    :param local (str): Local path to download files to, defaults to "/tmp"
+    :param bucket (str): Name of S3 bucket, defaults to "your_bucket"
+    """
+    paginator = client.get_paginator("list_objects")
+    for result in paginator.paginate(Bucket=bucket, Delimiter="/", Prefix=prefix):
+        if result.get("CommonPrefixes") is not None:
+            for subdir in result.get("CommonPrefixes"):
+                _download_dir(client, resource, subdir.get("Prefix"), local, bucket)
+        for file in result.get("Contents", []):
+            dest_pathname = os.path.join(local, file.get("Key"))
             if not os.path.exists(os.path.dirname(dest_pathname)):
                 os.makedirs(os.path.dirname(dest_pathname))
-            if not file.get('Key').endswith('/'):
-                resource.meta.client.download_file(bucket, file.get('Key'), dest_pathname)
+            if not file.get("Key").endswith("/"):
+                resource.meta.client.download_file(bucket, file.get("Key"), dest_pathname)
 
 
 @app.route("/api/sync_s3_to_source_docs", methods=["GET"])
@@ -137,13 +149,6 @@ def sync_s3_to_source_docs_route():
         print("DONE")
 
         # # Copy all the files on s3 recursively to the SOURCE_DOCUMENTS folder
-        # s3_client = boto3.resource("s3", region_name="eu-west-1")
-        # bucket = s3_client.Bucket(S3_SOURCES_BUCKET_NAME)
-        # for obj in bucket.objects.filter(Prefix=S3_PREFIX):
-
-        #     local_file_path = os.path.join(sources_folder_name, obj.key)
-        #     with open(local_file_path, "wb") as local_file:
-        #         bucket.download_fileobj(obj.key, local_file)
         client = boto3.client('s3')
         resource = boto3.resource('s3')
         _download_dir(client, resource, prefix=S3_PREFIX, local=sources_folder_name, bucket=S3_SOURCES_BUCKET_NAME)
