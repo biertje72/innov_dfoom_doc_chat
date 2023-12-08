@@ -32,8 +32,18 @@ elif torch.cuda.is_available():
 else:
     DEVICE_TYPE = "cpu"
 
+# Amount of documents to return (Default: 4)
+K_VALUE = 1
+SCORE_THRESHOLD = 0.8  # score_threshold: Minimum relevance threshold for similarity_score_threshold
+
 # Flag to determine whether to use chat history or not.
-USE_HISTORY = False #MBI custom, Maurice added this
+USE_HISTORY = True #MBI custom, Maurice added this
+
+# S3_SOURCES_BUCKET_NAME was "anl-dp-localgpt-source-documents
+# S3_PREFIX was "Glue_Documentation/maurice_testdocs"
+S3_SOURCES_BUCKET_NAME = "anl-dp-{env}-prompt-engine-artifacts"
+S3_PREFIX = "SOURCE_DOCUMENTS"
+LOCAL_SOURCES_FOLDER_NAME = "SOURCE_DOCUMENTS"
 
 SHOW_SOURCES = True
 logging.info(f"Running on: {DEVICE_TYPE}")
@@ -69,12 +79,13 @@ DB = Chroma(
     client_settings=CHROMA_SETTINGS,
 )
 
+
 #MBI: zie https://github.com/langchain-ai/langchain/blob/fe7b40cb2a3628290d45de169498ccbcc73735d3/libs/langchain/langchain/schema/vectorstore.py#L562
 RETRIEVER = DB.as_retriever(
     search_type="similarity_score_threshold",  # Added by Maurice :)
     search_kwargs={
-        'score_threshold': 0.8, # score_threshold: Minimum relevance threshold for similarity_score_threshold
-        'k': 1,  # Amount of documents to return (Default: 4)
+        'score_threshold': SCORE_THRESHOLD, # score_threshold: Minimum relevance threshold for similarity_score_threshold
+        'k': K_VALUE,  # Amount of documents to return (Default: 4)
     }     # Added by Maurice :)
 )
 
@@ -107,13 +118,7 @@ def delete_source_route():
     return jsonify({"message": f"Folder '{folder_name}' successfully deleted and recreated."})
 
 
-# future: anl-dp-bidev-prompt-engine-artifacts
-# bidev/biops/sbox
-#S3_SOURCES_BUCKET_NAME = "anl-dp-localgpt-source-documents"
-#S3_PREFIX = "Glue_Documentation/maurice_testdocs"
-S3_SOURCES_BUCKET_NAME = "anl-dp-{env}-prompt-engine-artifacts"
-S3_PREFIX = "SOURCE_DOCUMENTS"
-LOCAL_SOURCES_FOLDER_NAME = "SOURCE_DOCUMENTS"
+
 
 
 
