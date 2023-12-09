@@ -34,6 +34,8 @@ from constants import (
     MODELS_PATH,
 )
 
+from dp_prompt_engine_settings import DpPromptEngineSettings
+
 
 def load_model(device_type, model_id, model_basename=None, LOGGING=logging):
     """
@@ -78,7 +80,7 @@ def load_model(device_type, model_id, model_basename=None, LOGGING=logging):
         model=model,
         tokenizer=tokenizer,
         max_length=MAX_NEW_TOKENS,
-        temperature=0.000,  #default was 0.2
+        temperature=DpPromptEngineSettings.TEMPERATURE,  #default was 0.2
         #mbi k=1,
         # top_p=0.95,
         repetition_penalty=1.15,

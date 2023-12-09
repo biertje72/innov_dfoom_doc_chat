@@ -23,6 +23,8 @@ import boto3
 
 from constants import CHROMA_SETTINGS, EMBEDDING_MODEL_NAME, PERSIST_DIRECTORY, MODEL_ID, MODEL_BASENAME
 
+from dp_prompt_engine_settings import DpPromptEngineSettings
+
 logging.basicConfig(level=logging.DEBUG)
 
 if torch.backends.mps.is_available():
@@ -32,12 +34,6 @@ elif torch.cuda.is_available():
 else:
     DEVICE_TYPE = "cpu"
 
-# Amount of documents to return (Default: 4)
-K_VALUE = 3
-SCORE_THRESHOLD = 0.8  # score_threshold: Minimum relevance threshold for similarity_score_threshold
-
-# Flag to determine whether to use chat history or not.
-USE_HISTORY = False #MBI custom, Maurice added this
 
 # S3_SOURCES_BUCKET_NAME was "anl-dp-localgpt-source-documents
 # S3_PREFIX was "Glue_Documentation/maurice_testdocs"
@@ -84,15 +80,15 @@ DB = Chroma(
 RETRIEVER = DB.as_retriever(
     search_type="similarity_score_threshold",  # Added by Maurice :)
     search_kwargs={
-        'score_threshold': SCORE_THRESHOLD, # score_threshold: Minimum relevance threshold for similarity_score_threshold
-        'k': K_VALUE,  # Amount of documents to return (Default: 4)
+        'score_threshold': DpPromptEngineSettings.SCORE_THRESHOLD, # score_threshold: Minimum relevance threshold for similarity_score_threshold
+        'k': DpPromptEngineSettings.K_VALUE,  # Amount of documents to return (Default: 4)
     }     # Added by Maurice :)
 )
 
 LLM = load_model(device_type=DEVICE_TYPE, model_id=MODEL_ID, model_basename=MODEL_BASENAME)
-prompt, memory = get_prompt_template(promptTemplate_type="llama", history=USE_HISTORY)
+prompt, memory = get_prompt_template(promptTemplate_type="llama", history=DpPromptEngineSettings.USE_HISTORY)
 chain_type_kwargs = {"prompt": prompt}
-if USE_HISTORY:
+if DpPromptEngineSettings.USE_HISTORY:
     chain_type_kwargs["memory"] = memory
 
 QA = RetrievalQA.from_chain_type(
@@ -270,7 +266,7 @@ def run_ingest_route():
             client_settings=CHROMA_SETTINGS,
         )
         RETRIEVER = DB.as_retriever()
-        prompt, memory = get_prompt_template(promptTemplate_type="llama", history=USE_HISTORY)
+        prompt, memory = get_prompt_template(promptTemplate_type="llama", history=DpPromptEngineSettings.USE_HISTORY)
 
         QA = RetrievalQA.from_chain_type(
             llm=LLM,
