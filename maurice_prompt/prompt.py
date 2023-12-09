@@ -40,7 +40,7 @@ def main():
     while True:
         try:
             user_prompt = input(
-                "\n\nAsk me anything about the DP (d for details, r for reload docs, q to quit):\n"
+                "\n\nAsk me anything about the Pubengine (d for details, p for download & process docs, q to quit):\n"
             )
             if user_prompt == "":
                 continue
@@ -50,11 +50,14 @@ def main():
             elif user_prompt == "d":
                 print("\nDetails:")
                 pretty_print_json(last_result)
-            elif user_prompt == "r":
-                print("Reloading/ingesting")
+            elif user_prompt == "p":
                 # response = requests.get(http://10.0.135.48:5110/api/run_ingest)
+                print("Downloading documententation from S3")
+                response = requests.get(f"http://{get_ip_address()}:5110/api/sync_s3_to_source_docs")
+                print("\ndone downloading documententation from S3")
+                print("Reloading/ingesting")
                 response = requests.get(f"http://{get_ip_address()}:5110/api/run_ingest")
-                print(".. done Reloading/ingesting")
+                print("\n.. done Reloading/ingesting")
             else:
                 response = query_llm(user_prompt)
                 if response is None:
@@ -70,14 +73,11 @@ def main():
         except KeyboardInterrupt:
             print("\nCTRL+C detected. Use CTRL+Insert to copy..")
             try:
-                user_prompt = input(
-                    "\nDo you want to continue (y/n)?:\n"
-                )
-                if user_prompt.lower() != "y":
+                user_prompt = input("\nDo you want to quit (q)?:\n")
+                if user_prompt.lower() == "q":
                     print("Closing..")
                     break
-                else:
-                    continue
+                continue
             except KeyboardInterrupt:
                 print("Closing..")
                 break
