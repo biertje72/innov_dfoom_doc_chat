@@ -52,10 +52,10 @@ def main():
                 pretty_print_json(last_result)
             elif user_prompt == "p":
                 # response = requests.get(http://10.0.135.48:5110/api/run_ingest)
-                print("Downloading documententation from S3... ")
+                print("Downloading documententation from S3... ", end="")
                 response = requests.get(f"http://{get_ip_address()}:5110/api/sync_s3_to_source_docs")
                 print("DONE")
-                print("Reloading/ingesting... ")
+                print("Reloading/ingesting... ", end="")
                 response = requests.get(f"http://{get_ip_address()}:5110/api/run_ingest")
                 print("DONE")
                 print("--- PLEASE RESTART THE SERVER ---")
@@ -66,10 +66,17 @@ def main():
                     continue
                 last_result = response.json()
                 if last_result["Sources"]:
-                    print(f"\nAnswer:\n{last_result['Answer']}")
+                    print(f"\nAnswer:\n{last_result['Answer']}\n")
+                    print(f"This information is retrieved from the following page{'s' if len(last_result['Sources']) > 1 else ''}:\n")
+                    for source in last_result["Sources"]:
+                        source_page_id = source[0]
+                        clean_page_id = source_page_id[:source_page_id.find("_")]
+                        endpoint = f"https://globalitconfluence.us.aegon.com/pages/viewpage.action?pageId={clean_page_id}"
+                        print(f"\t- {endpoint}")
+                    print("Check them out for more details and examples.")
                 else:
                     print(
-                        "\nAnswer:\nBased on our documentation, I could not find a relevant answer"
+                        "\nAnswer:\nBased on our documentation, I could not find a relevant answer. Please try again with a different or more elaborate question."
                     )
         except KeyboardInterrupt:
             print("\nCTRL+C detected. Use CTRL+Insert to copy..")
@@ -85,3 +92,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
