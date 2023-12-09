@@ -58,6 +58,7 @@ def main():
                 print("Reloading/ingesting... ")
                 response = requests.get(f"http://{get_ip_address()}:5110/api/run_ingest")
                 print("DONE")
+                print("--- PLEASE RESTART THE SERVER ---")
             else:
                 response = query_llm(user_prompt)
                 if response is None:
