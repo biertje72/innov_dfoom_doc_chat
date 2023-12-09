@@ -73,7 +73,7 @@ def main():
                         clean_page_id = source_page_id[:source_page_id.find("_")]
                         endpoint = f"https://globalitconfluence.us.aegon.com/pages/viewpage.action?pageId={clean_page_id}"
                         print(f" - {endpoint}")
-                    print("Check them out for more details and examples.")
+                    print("Check them out for more details and examples regarding this answer.")
                 else:
                     print(
                         "\nAnswer:\nBased on our documentation, I could not find a relevant answer. Please try again with a different or more elaborate question."
