@@ -67,13 +67,12 @@ def main():
                 last_result = response.json()
                 if last_result["Sources"]:
                     print(f"\nAnswer:\n{last_result['Answer']}\n")
-                    print(f"References page{'s' if len(last_result['Sources']) > 1 else ''}:")
+                    print(f"References page{'s' if len(last_result['Sources']) > 1 else ''} with more details and examples regarding this answer:")
                     for source in last_result["Sources"]:
                         source_page_id = source[0]
                         clean_page_id = source_page_id[:source_page_id.find("_")]
                         endpoint = f"https://globalitconfluence.us.aegon.com/pages/viewpage.action?pageId={clean_page_id}"
                         print(f" - {endpoint}")
-                    print("Check them out for more details and examples regarding this answer.")
                 else:
                     print(
                         "\nAnswer:\nBased on our documentation, I could not find a relevant answer. Please try again with a different or more elaborate question."
