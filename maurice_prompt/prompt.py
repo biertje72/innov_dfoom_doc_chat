@@ -21,11 +21,11 @@ def query_llm(user_prompt: str):
             if response.status_code == 200:
                 break
             else:
-                print(f"API call failed with status code {response.status_code}. Retrying...")
-                time.sleep(2)
+                print(f"API call failed with status code {response.status_code}. Retrying in 4s...")
+                time.sleep(4)
         except requests.exceptions.RequestException:
-            print("API call failed due to a network error. Retrying...")
-            time.sleep(2)
+            print("API call failed due to a network error. Retrying in 4s...")
+            time.sleep(4)
 
     return response
 
@@ -52,12 +52,12 @@ def main():
                 pretty_print_json(last_result)
             elif user_prompt == "p":
                 # response = requests.get(http://10.0.135.48:5110/api/run_ingest)
-                print("Downloading documententation from S3")
+                print("Downloading documententation from S3... ")
                 response = requests.get(f"http://{get_ip_address()}:5110/api/sync_s3_to_source_docs")
-                print("\ndone downloading documententation from S3")
-                print("Reloading/ingesting")
+                print("DONE")
+                print("Reloading/ingesting... ")
                 response = requests.get(f"http://{get_ip_address()}:5110/api/run_ingest")
-                print("\n.. done Reloading/ingesting")
+                print("DONE")
             else:
                 response = query_llm(user_prompt)
                 if response is None:
