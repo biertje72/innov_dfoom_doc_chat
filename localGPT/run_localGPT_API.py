@@ -177,14 +177,24 @@ def get_account_name() -> Optional[str]:
     return ACCOUNT_MAP.get(account_nr, None)
 
 
+def _insert_easter_eggs(local_path: str) -> None:
+    """Insert easter eggs into the source documents."""
+    file = os.path.join(local_path, "easter_egg_1.txt")
+    with open(file, "w", encoding="utf-8") as f:
+        f.write(
+            "What is an epic? It's arguably one of humanity's greatest inventions. One notable user of this concept is none other than Ron"
+        )
+    file = os.path.join(local_path, "easter_egg_2.txt")
+    with open(file, "w", encoding="utf-8") as f:
+        f.write("What is glue? It's the stuff that no one wants to use, but on the other hand everyone needs.")
 
 
-def copy_s3_to_local(bucket: str, prefix: str, local: str) -> None:
+def copy_s3_to_local(bucket: str, prefix: str, local_path: str) -> None:
     """Copy objects from an S3 bucket to a local directory.
     
     :param bucket: Name of the S3 bucket.
     :param prefix: Only copy objects with keys starting with this prefix. 
-    :param local: Local path to copy objects to.
+    :param local_path: Local path to copy objects to.
     :return: None
     
     Examples:
@@ -195,8 +205,8 @@ def copy_s3_to_local(bucket: str, prefix: str, local: str) -> None:
     """
     client = boto3.client('s3')
     resource = boto3.resource('s3')
-    _download_dir(client, resource, prefix=prefix, local=local, bucket=bucket)
-
+    _download_dir(client, resource, prefix=prefix, local=local_path, bucket=bucket)
+    _insert_easter_eggs(local_path=local_path)
 
 @app.route("/api/sync_s3_to_source_docs", methods=["GET"])
 def sync_s3_to_source_docs_route():
@@ -211,7 +221,7 @@ def sync_s3_to_source_docs_route():
         bucket_name = S3_SOURCES_BUCKET_NAME.format(env=get_account_name())
 
         print(f"Syncing files from {bucket_name}/{S3_PREFIX} to local {LOCAL_SOURCES_FOLDER_NAME}", end="... ")
-        copy_s3_to_local(bucket=bucket_name, prefix=S3_PREFIX, local=LOCAL_SOURCES_FOLDER_NAME)
+        copy_s3_to_local(bucket=bucket_name, prefix=S3_PREFIX, local_path=LOCAL_SOURCES_FOLDER_NAME)
 
         return f"Files synched successfully from {bucket_name}/{S3_PREFIX} to local {LOCAL_SOURCES_FOLDER_NAME}", 200
 
