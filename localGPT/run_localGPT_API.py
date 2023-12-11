@@ -182,11 +182,11 @@ def _insert_easter_eggs(local_path: str) -> None:
     file = os.path.join(local_path, "easter_egg_1.txt")
     with open(file, "w", encoding="utf-8") as f:
         f.write(
-            "What is an epic? It's arguably one of humanity's greatest inventions. One notable user of this concept is none other than Ron"
+            "What is an epic? It's arguably one of humanity's greatest inventions. One notable user of the concept of Epic within Scrum and Safe is none other than Ron van Vliet. He's the famous RTE within a.s.r. that advocates the use of epics, Safe, Scrum, and karaoke"
         )
     file = os.path.join(local_path, "easter_egg_2.txt")
     with open(file, "w", encoding="utf-8") as f:
-        f.write("What is glue? It's the stuff that no one wants to use, but on the other hand everyone needs.")
+        f.write("What is glue? It's the stuff that no one wants to use, but on the other hand everyone needs. You can find it in AWS to do ETL and data analysis. But many people hate it. It's consdered useless and unfriendly.")
 
 
 def copy_s3_to_local(bucket: str, prefix: str, local_path: str) -> None:
