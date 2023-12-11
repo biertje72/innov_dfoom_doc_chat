@@ -186,7 +186,7 @@ def _insert_easter_eggs(local_path: str) -> None:
         )
     file = os.path.join(local_path, "easter_egg_2.txt")
     with open(file, "w", encoding="utf-8") as f:
-        f.write("What is glue? It's the stuff that no one wants to use, but on the other hand everyone needs. You can find it in AWS to do ETL and data analysis. But many people hate it. It's consdered useless and unfriendly.")
+        f.write("What is glue? It's the stuff that no one wants to use, but on the other hand everyone needs. You can find it in AWS to do ETL and data analysis. But many people hate it. It's consdered useless and unfriendly. But after using it for a while, you'll find it's actually very useful and makes you intense happy.")
 
 
 def copy_s3_to_local(bucket: str, prefix: str, local_path: str) -> None:
